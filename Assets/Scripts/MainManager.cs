@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,13 +12,21 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
-    
+
+
     private bool m_Started = false;
+    private string m_playerName;
     private int m_Points;
+    private string b_playerName;
+    private int b_score;
     
     private bool m_GameOver = false;
 
+    private void Awake() {
+        BestScoreText.text = "Best Score: " + Persistance.Instance.b_playerName + ": " + Persistance.Instance.b_score;
+    }
     
     // Start is called before the first frame update
     void Start()
@@ -66,6 +75,16 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        if(m_Points > Persistance.Instance.b_score){
+            Persistance.Instance.NewHighScore(m_Points);
+            Persistance.Instance.SaveScore();
+            BestScoreText.text = "Best Score: " + Persistance.Instance.b_playerName + ": " + Persistance.Instance.b_score;
+        }
+    }
+
+    public void GoToMainMenu() 
+    {
+        SceneManager.LoadScene("menu");
     }
 
     public void GameOver()
